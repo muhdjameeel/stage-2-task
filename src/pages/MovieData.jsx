@@ -27,7 +27,7 @@ function MovieData() {
     const year = localDate.getUTCFullYear();
     const month = (localDate.getUTCMonth() + 1).toString().padStart(2, '0'); // Month is zero-indexed
     const day = localDate.getUTCDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    return `${year}`;
   };
 
   useEffect(() => {
@@ -93,7 +93,7 @@ function MovieData() {
               alt={movieData.title}
               style={{
                 height: isSmallScreen ? '15rem' : '25rem',
-                width: isSmallScreen ? '100%' : '70%',
+                width: isSmallScreen ? '100%' : '85%',
                 borderRadius: '1rem',
                 marginTop: !isSmallScreen? '-16rem' : '0',
               }}
@@ -108,7 +108,7 @@ function MovieData() {
                 fontWeight: 'bold',
                 color: 'gray',
                 fontSize: isSmallScreen? '.5rem' : '.8rem',
-                width: '70%',
+                width: isSmallScreen ? '100%' : '70%',
                 margin: 'auto',
                 border: '1px solid',
               }}
@@ -152,7 +152,7 @@ function MovieData() {
               data-testid="movie-overview"
               style={{
                 textAlign: 'left',
-                width: '50%',
+                width: '63%',
                 marginLeft: isPCScreen && isTabScreen ?  '18rem' : '7rem',
                 color: 'gray',
                 fontSize: '.8rem',

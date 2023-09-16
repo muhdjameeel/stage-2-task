@@ -23,7 +23,7 @@ function NavBar() {
   
 <ul style={{display: 'flex', flexDirection:'column', height: '100%', justifyContent:'space-between', marginTop: '1rem', fontSize: '.9rem', listStyleType: 'none'}}>
   
-  <Link to"/"> 
+  <Link to='/'> 
   <li style={{marginBottom: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-around', width: '12.5rem', marginLeft: '-2.7rem'}} className='homeIcon'>
     <HomeIcon/>
     <p>Home</p>

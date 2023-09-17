@@ -29,7 +29,7 @@ function MovieData() {
     const year = localDate.getUTCFullYear();
     const month = (localDate.getUTCMonth() + 1).toString().padStart(2, '0'); // Month is zero-indexed
     const day = localDate.getUTCDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    return `${year}`;
   };
 
   useEffect(() => {
@@ -139,7 +139,7 @@ function MovieData() {
         {formatToUTCDate(movieData.release_date)}
       </p>
                     <p data-testid="movie-runtime" style={{width: isSmallScreen ? '40%' : '10%'}} >
-                {movieData.runtime}  
+                {movieData.runtime}  minutes
               </p>
               <div style={{ display: 'flex' }}>
 

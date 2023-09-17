@@ -11,23 +11,25 @@ import { useMediaQuery } from '@mui/material';
 import Footer from '../components/Footer';
 import { Link } from 'react-router-dom';
 import PhoneHeader from '../components/PhoneHeader';
-import '../index.css'
 
 function MovieData() {
-  const isSmallScreen = useMediaQuery('(max-width: 600px)')
-  const isTabScreen = useMediaQuery('(max-width: 1100px)')
-  const isPCScreen = useMediaQuery('(min-width: 1110px)')
+  const isSmallScreen = useMediaQuery('(max-width: 750px)')
+  const isTabscreen = useMediaQuery('(max-width: 1100px)')
+  const isPcscreen = useMediaQuery('(min-width: 1110px)')
   const { id } = useParams();
   const [movieData, setMovieData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isloading, setIsLoading] = useState(true);
   const [genreNames, setGenreNames] = useState([]);
+  const [videoKey, setVideoKey] = useState(null);
+
+
 
   const formatToUTCDate = (dateString) => {
     const localDate = new Date(dateString);
     const year = localDate.getUTCFullYear();
     const month = (localDate.getUTCMonth() + 1).toString().padStart(2, '0'); // Month is zero-indexed
     const day = localDate.getUTCDate().toString().padStart(2, '0');
-    return `${year}`;
+    return `${year}-${month}-${day}`;
   };
 
   useEffect(() => {
@@ -55,10 +57,26 @@ function MovieData() {
           release_date: formattedDate,
         };
         setMovieData(updatedMovieData);
-        setLoading(false);
+        setIsLoading(false);
+
+        
+        // Fetch movie videos
+        const videoResponse = await axios.get(
+          `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${apiKey}`
+        );
+
+        // Find the first trailer video (you can customize this logic)
+        const trailerVideo = videoResponse.data.results.find(
+          (video) => video.type === 'Trailer'
+        );
+
+        if (trailerVideo) {
+          setVideoKey(trailerVideo.key);
+        }
+
       } catch (error) {
-        console.error('Error fetching movie details:', error);
-        setLoading(false);
+        console.error('Error fetching movie data:', error);
+        setIsLoading(false);
         
       }
     };
@@ -67,15 +85,15 @@ function MovieData() {
   }, [id]);
 
   return (
-    <div>
+    <div style={{ display: 'flex', alignItems: 'center',}} >
 
-   
-    <div style={{ display: 'flex', alignItems: 'center', flexDirection: isSmallScreen ? 'column' : 'row' , justifyContent: 'space-between'}}>
-      {!isSmallScreen && <NavBar /> }
-      {isSmallScreen && <PhoneHeader/>}
+{!isSmallScreen && <NavBar /> }
+    <div style={{ display: 'flex', alignItems: 'center', flexDirection: isSmallScreen ? 'column' : 'column' , justifyContent: 'space-between'}}>
+      
+{isSmallScreen && <PhoneHeader/>}
       
       <>
-        {loading ? (
+        {isloading ? (
           <div
             style={{
               width: '100%',
@@ -87,40 +105,41 @@ function MovieData() {
             <Spinner />
           </div>
         ) : movieData ? (
-          <Container className='details' style={{padding: '1rem 0 0 0', marginTop: '3.2rem'}}>
-            <img
-              src={`https://image.tmdb.org/t/p/w500/${movieData.backdrop_path}`}
-              alt={movieData.title}
-              style={{
-                height: isSmallScreen ? '15rem' : '25rem',
-                width: isSmallScreen ? '100%' : '85%',
-                borderRadius: '1rem',
-                marginTop: !isSmallScreen? '-16rem' : '0',
-              }}
-              data-testid="movie-poster"
-            />
+          <Container style={{padding: '1rem 0 0 0'}}>
+            <Container>
+            <iframe
+                src={`https://www.youtube.com/embed/${videoKey}`}
+                title="Movie Trailer"
+                style={{
+                  height: '22rem',
+                  width: '100%',
+                  borderRadius: '1rem',
+                  marginTop: isSmallScreen ? '1rem' : '4rem',
+                }}
+                allowFullScreen
+              />
+            </Container>
+            
             
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between',
+                justifyContent: 'center',
                 fontWeight: 'bold',
                 color: 'gray',
                 fontSize: isSmallScreen? '.5rem' : '.8rem',
-                width: isSmallScreen ? '100%' : '70%',
-                margin: 'auto',
-                border: '1px solid',
+                width: '98%',
               }}
             >
-              <p data-testid="movie-title" style={{width: isSmallScreen ? '50%' : '20%', }}>
+              <p data-testid="movie-title" style={{width: isSmallScreen ? '50%' : '20%'}}>
                 {movieData.title} 
               </p>
                     <p data-testid="movie-release-date" style={{ width: isSmallScreen ? '40%' : '20%' }}>
         {formatToUTCDate(movieData.release_date)}
       </p>
                     <p data-testid="movie-runtime" style={{width: isSmallScreen ? '40%' : '10%'}} >
-                {movieData.runtime}  minutes
+                {movieData.runtime}  
               </p>
               <div style={{ display: 'flex' }}>
 
@@ -142,43 +161,38 @@ function MovieData() {
             </div>
             <div  style={{marginLeft: isSmallScreen ? '0' : '6rem', display: 'flex', alignItems: 'center'}}>
               <img src={Staricon} alt=""  style={{height: '1rem' , width: '1rem', marginRight: '3px'}}/>
-            <p>8.3</p>
+            <p>8.5</p>
             </div>
            
             </div>
            
-            <div  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around'}}>
+            <div  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', flexDirection: isSmallScreen ? 'column' : 'row'}}>
             <p
               data-testid="movie-overview"
               style={{
                 textAlign: 'left',
-                width: '63%',
-                marginLeft: isPCScreen && isTabScreen ?  '18rem' : '7rem',
+                width: isSmallScreen ? '80%' : '50%',
+                marginLeft: isPcscreen && isTabscreen ?  '18rem' : '2rem',
                 color: 'gray',
                 fontSize: '.8rem',
               }}
             >
               {movieData.overview}
             </p>
-
-            <div  style={{ display: 'flex', alignItems: 'flex-start', flexDirection: 'column', justifyContent: 'space-between', height: '5rem', width: '180px', marginRight: '95px'}}>
-
-              <div  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' , fontSize: '.6rem', backgroundColor: '#BE122C', color: 'white', width: '160px', borderRadius: '.3rem', marginBottom: '1rem',  border: '1px solid #BE122C'}}>
-               <img src={Ticketicon} alt=""  style={{height: '10px' , width: '13px'}} />
-                <p style={{marginLeft: '2px'}}>See show times</p>
+            <div  style={{ display: 'flex', alignItems: 'center', flexDirection: 'column', justifyContent: 'space-between', height: '5rem'}}>
+              <div  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' , fontSize: '.6rem', backgroundColor: '#BE123C', color: 'white', width: isSmallScreen? '15rem' : '8rem', borderRadius: '.3rem', marginBottom: '1rem',  border: '1px solid #BE123C'}}>
+               <img src={Ticketicon} alt=""  style={{height: '1rem' , width: '1rem'}} />
+                <p style={{marginLeft: '4px', textTransform: 'capitalize'}}>see show time</p>
               </div>
-
-              <div  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' , fontSize: '.6rem', backgroundColor: '#dcbfc7', color: 'white', width: '160px', borderRadius: '.3rem', border: '1px solid #BE122C'}}>
-               <img src={Listicon} alt=""  style={{height: '10px' , width: '13px'}} />
-                <p style={{marginLeft: '2px'}}>More watch movies</p>
+              <div  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' , fontSize: '.6rem', backgroundColor: '#dcbfc7', color: 'white', width: isSmallScreen? '15rem' : '8rem', borderRadius: '.3rem', border: '1px solid #BE123C'}}>
+               <img src={Listicon} alt=""  style={{height: '1rem' , width: '1rem'}} />
+                <p style={{marginLeft: '4px', textTransform: 'capitalize'}}>more watch options</p>
               </div>
-
               <Link to='/' style={{color: '#BE123C'}}>
-            <p style={{textAlign: 'right', marginTop: '4rem'}}>
+            
               Back To Home
-            </p>
+            
             </Link>
-
             </div>
             </div>
             
@@ -192,15 +206,15 @@ function MovieData() {
               justifyContent: 'center',
             }}
           >
-            <p style={{ color: 'red' }}>Can't load movie data...</p>
+            <p style={{ color: 'red' }}>Error fetching data, try again</p>
           </div>
         )}
       </>
-       
-    </div>
-    <div style={{width: '100%', alignItems: 'center', justifyContent: 'center', display: 'flex', marginTop: '3rem'}}>
+      <div style={{width: '100%', alignItems: 'center', justifyContent: 'center', display: 'flex', marginTop: '3rem'}}>
 <Footer/>
 </div>
+    </div>
+   
     </div>
   );
 }

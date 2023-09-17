@@ -10,9 +10,10 @@ import { Link } from 'react-router-dom';
 import { useMediaQuery } from '@mui/material';
 
 function NavBar() {
-  const isTabScreen = useMediaQuery('(max-width: 1000px)')
+  // const isSmallScreen = useMediaQuery('(max-width: 600px)')
+  const isTabscreen = useMediaQuery('(max-width: 1100px)')
   return (
-    <div style={{width: '12rem', border: '4px solid gray', height: !isTabScreen ? '90vh' : 'auto'  , borderRadius: '0 1rem 1rem 0', padding: '3rem 0'}}>
+    <div style={{width: '12rem', border: '2px solid gray', height: !isTabscreen ? '110vh' : 'auto'  , borderRadius: '0 1rem 1rem 0', padding: '3rem 0'}}>
 <nav style={{display: 'flex', flexDirection:'column', width: '100%', alignItems: 'center', justifyContent: 'center'}}>
   <Link to='/' style={{ textDecoration: 'none', color: 'inherit' , width: '100%', padding: '0 2rem'}}>
   <header style={{display: 'flex', alignItems: 'center', justifyContent: 'space-around'}}>
@@ -23,12 +24,10 @@ function NavBar() {
   
 <ul style={{display: 'flex', flexDirection:'column', height: '100%', justifyContent:'space-between', marginTop: '1rem', fontSize: '.9rem', listStyleType: 'none'}}>
   
-  <Link to='/' style={{width: 100%}}> 
   <li style={{marginBottom: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-around', width: '12.5rem', marginLeft: '-2.7rem'}} className='homeIcon'>
     <HomeIcon/>
     <p>Home</p>
   </li>
-  </Link>
   
   <li style={{marginBottom: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-around', width: '12.5rem', marginLeft: '-2.7rem'}} className='ondemandVideo'>
 <OndemandVideo/>
@@ -48,7 +47,7 @@ function NavBar() {
   <p style={{fontSize: '.7rem', width: '90%'}}>50k people are playing now</p>
   <button style={{border: 'none', borderRadius: '.6rem', height: '1.8rem' , cursor: 'pointer' }}>start playing</button>
 </div>
-<div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: isTabScreen ? '4rem' : '2rem'}}>
+<div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: isTabscreen ? '4rem' : '2rem'}}>
   <LogoutIcon/>
   <p>Log out</p>
 </div>

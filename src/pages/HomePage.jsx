@@ -6,17 +6,22 @@ import hamButton from '../assets/ellipse.png';
 import imbdLogo from '../assets/imbd.png';
 import rottenTomatoesLogo from '../assets/rotten-tomatoes.png';
 import MovieCard from '../components/MovieCard';
-import { Container } from '@mui/material';
+import { Container, Link } from '@mui/material';
 import Footer from '../components/Footer';
 import Spinner from '../components/Spinner';
 import { toast } from 'react-toastify';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import SearchIcon from '@mui/icons-material/Search';
+import { useMediaQuery } from '@mui/material';
 
 function HomePage() {
+  const isSmallScreen = useMediaQuery('(max-width: 750px)')
+  // const isTabscreen = useMediaQuery('(max-width: 1100px)')
+  const isPcscreen = useMediaQuery('(min-width: 1110px)')
+
   const [posterMovieData, setPosterMovieData] = useState(null);
   const [topMovies, setTopMovies] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
 
@@ -27,11 +32,12 @@ function HomePage() {
         const response = await axios.get(
           `https://api.themoviedb.org/3/search/movie?query=John+Wick&api_key=${apiKey}`
         );
+        console.log(response.data.results);
         setPosterMovieData(response.data.results[3]);
-        setIsLoading(false);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching poster:', error);
-        setIsLoading(false);
+        setLoading(false);
       }
     };
     fetchPoster();
@@ -58,36 +64,40 @@ function HomePage() {
   }, []);
 
   const handleSearch = async () => {
-    setIsLoading(true);
+    setLoading(true);
     try {
       const apiKey = '523c8b46aafc35c66f9fd4323369516c';
       const response = await axios.get(
         `https://api.themoviedb.org/3/search/movie?query=${searchQuery}&api_key=${apiKey}`
       );
       setSearchResults(response.data.results);
-      setIsLoading(false);
+      setLoading(false);
     } catch (error) {
       console.error('Error searching for movies:', error);
       toast.error('Oops! No Movies Found')
       
     }
-    setIsLoading(false);
+    setLoading(false);
   };
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-      <div style={{ width: '100%', height: '29rem', backgroundImage: `url(${Poster})`, backgroundPosition: 'center', backgroundRepeat: 'no-repeat', backgroundSize: 'cover' }}>
-        <header>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', padding: '1rem 5rem 5rem 5rem' }}>
-            <img src={Logo} alt="" style={{ cursor: 'pointer' }}/>
+    <div style={{ display: 'flex',  flexDirection: 'column'  }}>
+   <div style={{border : '2px solid black', width: isSmallScreen ? '150%' : 'auto', padding : '0 0 1rem 0', backgroundImage: `url(${Poster})`, backgroundPosition: 'center', backgroundSize: 'cover', backgroundRepeat: 'no-repeat'}}>
+        <header style={{width: '100%'}}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: isSmallScreen ? '1rem  1.5rem' : '1rem 5rem 5rem 5rem' , marginLeft: isSmallScreen  ? '-5rem' : 'auto'}}>
+            
+            <Link to='/' >
+            <img src={Logo} alt="" style={{ cursor: 'pointer', height: isSmallScreen ? '2rem' : 'auto', marginLeft: isSmallScreen ? '6rem' : '0', width: isSmallScreen ? '7rem' : 'auto' }}/>
+            </Link>
+
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
     <input
       type="text"
-      placeholder="What would you like to watch"
+      placeholder="What do you want to watch?"
       style={{
         border: '3px solid white',
         backgroundColor: 'transparent',
-        width: '40rem',
+        width:  isPcscreen ? '45rem' : '100%',
         borderRadius: '1rem',
         height: '1.5rem',
         padding: '0.5rem 1rem 0.5rem 2rem', 
@@ -103,11 +113,10 @@ function HomePage() {
     </div>
    
   </div>
-            <img src={hamButton} alt="" style={{ cursor: 'pointer' }} />
+            <img src={hamButton} alt="" style={{ cursor: 'pointer', height: isSmallScreen ? '1.5rem' : 'auto' }} />
           </div>
           {posterMovieData ? (
-            <Container style={{ border: '1px solid', width: '100%', height: '19rem', marginLeft: '1rem',}}>
-
+            <Container style={{textAlign: 'left', marginTop: isSmallScreen ? '3rem' : '0'}}>
               <h2 style={{ color: 'white', textAlign: 'left', width: '20rem', paddingLeft: '5rem' }}>{posterMovieData.title}</h2>
               <div style={{ display: 'flex', width: '13rem', justifyContent: 'space-between', paddingLeft: '5rem' }}>
                 <img src={imbdLogo} alt="" />
@@ -118,45 +127,55 @@ function HomePage() {
                 <PlayCircleOutlineIcon sx={{color: 'white'}}/>
                 Watch Later
                 </button>
-
             </Container>
           ) : (
             <p style={{ color: 'white' }}>Loading....</p>
           )}
         </header>
-        <main style={{ marginTop: '5.2rem' }}>
+        </div>
+        <main style={{ marginTop: '5rem' }}>
+
   <Container>
-    {isLoading ? (
+    {loading ? (
+      <div  style={{width: '100%', alignItems: 'center', justifyContent: 'center', display: 'flex', marginLeft: isSmallScreen ? '25%' : '0'}}>
       <Spinner />
+      </div>
+      
     ) : (
+     
       <>
         {Array.isArray(searchResults) &&searchQuery && searchResults.length > 0 && (
-          <div style={{marginBottom: '3rem'}}>
-            <h1 style={{marginLeft: '2rem', textAlign: 'left', fontSize: '1.2rem', marginBottom: '2rem' }}>Search Results</h1>
-            <Container className="movie-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '3rem' }}>
+          <Container style={{marginBottom: '3rem', display: 'flex', flexDirection: 'column', marginLeft: isSmallScreen ? '20%' : '0', marginTop: '-2rem'}}>
+            <h1 style={{ textAlign: 'left', fontSize: '1.2rem', marginBottom: '2rem',  marginTop: isSmallScreen ? '-2rem' : '0' }}>Search Results for <span style={{color: 'gray', textTransform: 'capitalize'}}>{searchQuery}</span></h1>
+            <Container className="movie-grid" style={{ display: 'grid', gridTemplateColumns: isSmallScreen ? 'repeat(1, 1fr)' : 'repeat(4, 1fr)', gap: '3rem' }}>
               {searchResults.map((movie) => (
                 <MovieCard key={movie.id} movie={movie} />
               ))}
             </Container>
-          </div>
+          </Container>
         )}
-        <h1 style={{marginLeft: '2rem', textAlign: 'left', fontSize: '1.2rem', marginBottom: '1rem', marginTop: '3rem' }}>Top 10 Movies</h1>
+        <Container style={{display: 'flex', flexDirection: 'column', marginLeft: isSmallScreen ? '20%' : '0', marginTop: '-2rem'}}>
+        <h1 style={{ textAlign: 'left', fontSize: '1.2rem', marginBottom: '1rem'}}>Top 10 Movies</h1>
         {Array.isArray(topMovies) && topMovies.length > 0 && (
-  <Container style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '3rem' }}>
+  <Container style={{ display: 'grid', gridTemplateColumns: isSmallScreen ? 'repeat(1, 1fr)' : 'repeat(4, 1fr)', gap: '3rem' }}>
     {topMovies.map((movie) => (
       <MovieCard key={movie.id} movie={movie} />
     ))}
   </Container>
 )}
+        </Container>
+        
 
       </>
     )}
   </Container>
 </main>
-
-        <Footer />
+<div style={{width: '100%', alignItems: 'center', justifyContent: 'center', display: 'flex', marginLeft: isSmallScreen ? '25%' : '0'}}>
+<Footer />
+</div>
+       
       </div>
-    </div>
+  
   );
 }
 

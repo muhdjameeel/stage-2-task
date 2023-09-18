@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 import PhoneHeader from '../components/PhoneHeader';
 
 function MovieData() {
+  
   const isSmallScreen = useMediaQuery('(max-width: 750px)')
   const isTabscreen = useMediaQuery('(max-width: 1100px)')
   const isPcscreen = useMediaQuery('(min-width: 1110px)')
